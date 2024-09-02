@@ -25,6 +25,23 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.guardarPaciente(paciente));
     }
 
+    //GET
+    @GetMapping("/buscar/{id}")
+    public ResponseEntity<Paciente>  buscarPorId(@PathVariable Integer id){
+        Optional<Paciente>  pacienteEncontrado = pacienteService.buscarPorId(id);
+        if(pacienteEncontrado.isPresent()) {
+            return ResponseEntity.ok(pacienteEncontrado.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    //GET
+    @GetMapping("/buscartodos")
+    public ResponseEntity<List<Paciente>>  buscarTodos(){
+        return ResponseEntity.ok(pacienteService.buscarTodos());
+    }
+
     //PUT
     @PutMapping("/modificar")
     public ResponseEntity<String>  modificarPaciente(@RequestBody Paciente paciente){
@@ -51,20 +68,5 @@ public class PacienteController {
         }
     }
 
-    //GET
-    @GetMapping("/buscar/{id}")
-    public ResponseEntity<Paciente>  buscarPorId(@PathVariable Integer id){
-        Optional<Paciente>  pacienteEncontrado = pacienteService.buscarPorId(id);
-        if(pacienteEncontrado.isPresent()) {
-            return ResponseEntity.ok(pacienteEncontrado.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
 
-    //GET
-    @GetMapping("/buscartodos")
-    public ResponseEntity<List<Paciente>>  buscarTodos(){
-        return ResponseEntity.ok(pacienteService.buscarTodos());
-    }
 }
