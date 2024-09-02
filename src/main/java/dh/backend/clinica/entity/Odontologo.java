@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 
 @Getter
 @Setter
@@ -23,7 +25,9 @@ public class Odontologo {
     private String apellido;
     private String nombre;
 
-
+    @OneToMany(mappedBy = "odontologo", cascade = CascadeType.REMOVE)
+    @JsonManagedReference(value = "odontologo-turno")//@JsonIgnore
+    private Set<Turno> turnoSet;
     @Override
     public String toString() {
         return GsonProvider.getGson().toJson(this);
