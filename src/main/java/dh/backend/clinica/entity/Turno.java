@@ -1,5 +1,6 @@
 package dh.backend.clinica.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import dh.backend.clinica.utils.GsonProvider;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,7 @@ public class Turno {
     @ManyToOne
     @JsonBackReference(value = "paciente-turno")
     private Paciente paciente;
-//
+
     @ManyToOne
     @JsonBackReference(value = "odontologo-turno")
     private Odontologo odontologo;

@@ -1,5 +1,10 @@
 package dh.backend.clinica.service.impl;
 
+import dh.backend.clinica.dto.request.TurnoModifyDto;
+import dh.backend.clinica.dto.request.TurnoRequestDto;
+import dh.backend.clinica.dto.response.OdontologoResponseDto;
+import dh.backend.clinica.dto.response.PacienteResponseDto;
+import dh.backend.clinica.dto.response.TurnoResponseDto;
 import dh.backend.clinica.entity.Odontologo;
 import dh.backend.clinica.entity.Paciente;
 import dh.backend.clinica.entity.Turno;
@@ -7,8 +12,12 @@ import dh.backend.clinica.repository.ITurnoRepository;
 import dh.backend.clinica.service.IOdontologoService;
 import dh.backend.clinica.service.IPacienteService;
 import dh.backend.clinica.service.ITurnoService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +26,8 @@ public class TurnoService implements ITurnoService {
     private ITurnoRepository turnoRepository;
     private IPacienteService pacienteService;
     private IOdontologoService odontologoService;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public TurnoService(ITurnoRepository turnoRepository, IPacienteService pacienteService, IOdontologoService odontologoService) {
         this.turnoRepository = turnoRepository;
@@ -24,16 +35,29 @@ public class TurnoService implements ITurnoService {
         this.odontologoService = odontologoService;
     }
 
-    public Turno guardarTurno(Turno turno){
-        Optional<Paciente> paciente = pacienteService.buscarPorId(turno.getPaciente().getId());
-        Optional<Odontologo> odontologo = odontologoService.buscarPorId(turno.getOdontologo().getId());
-        Turno turnoARetornar = null;
+    @Override
+    public TurnoResponseDto guardarTurno(TurnoRequestDto turnoRequestDto){
+        Optional<Paciente> paciente = pacienteService.buscarPorId(turnoRequestDto.getPaciente_id());
+        Optional<Odontologo> odontologo = odontologoService.buscarPorId(turnoRequestDto.getOdontologo_id());
+        Turno turno = new Turno();
+        Turno turnoDesdeDB = null;
+        TurnoResponseDto turnoResponseDto = null;
         if(paciente.isPresent() && odontologo.isPresent()){
+            //armado del turno desde el turno request dto
             turno.setPaciente(paciente.get());
             turno.setOdontologo(odontologo.get());
-            turnoARetornar = turnoRepository.save(turno);
+            turno.setFecha(LocalDate.parse(turnoRequestDto.getFecha()));
+            //obtengo el turno persistido con el id
+            turnoDesdeDB = turnoRepository.save(turno);
+
+            //armado del turno response dto desde el turno obtenido de la base de datos
+            //turnoResponseDto = obtenerTurnoResponse(turnoDesdeDB);
+           //armado con model mapper
+           turnoResponseDto = convertirTurnoEnResponse(turnoDesdeDB);
+
         }
-        return turnoARetornar;
+
+        return turnoResponseDto;
     }
 
     @Override
@@ -42,17 +66,25 @@ public class TurnoService implements ITurnoService {
     }
 
     @Override
-    public List<Turno> buscarTodos() {
-        return turnoRepository.findAll();
+    public List<TurnoResponseDto> buscarTodos() {
+        List<Turno> turnoDesdeDB = turnoRepository.findAll();
+        List<TurnoResponseDto> turnoRespuesta = new ArrayList<>();
+        for (Turno t: turnoDesdeDB){
+            //turnoRespuesta.add(obtenerTurnoResponse(t));
+            turnoRespuesta.add(convertirTurnoEnResponse(t));
+        }
+        return turnoRespuesta;
     }
 
     @Override
-    public void modificarTurno(Turno turno) {
-        Optional<Paciente> paciente = pacienteService.buscarPorId(turno.getPaciente().getId());
-        Optional<Odontologo> odontologo = odontologoService.buscarPorId(turno.getOdontologo().getId());
+    public void modificarTurno(TurnoModifyDto turnoModifyDto) {
+        Optional<Paciente> paciente = pacienteService.buscarPorId(turnoModifyDto.getPaciente_id());
+        Optional<Odontologo> odontologo = odontologoService.buscarPorId(turnoModifyDto.getOdontologo_id());
         if(paciente.isPresent() && odontologo.isPresent()){
-            turno.setPaciente(paciente.get());
-            turno.setOdontologo(odontologo.get());
+            Turno turno = new Turno(
+                    turnoModifyDto.getId(),
+                    paciente.get(), odontologo.get(), LocalDate.parse(turnoModifyDto.getFecha())
+                    );
             turnoRepository.save(turno);
         }
 
@@ -61,6 +93,32 @@ public class TurnoService implements ITurnoService {
     @Override
     public void eliminarTurno(Integer id) {
         turnoRepository.deleteById(id);
+    }
+
+    private TurnoResponseDto obtenerTurnoResponse(Turno turnoDesdeDB){
+        OdontologoResponseDto odontologoResponseDto = new OdontologoResponseDto(
+                turnoDesdeDB.getOdontologo().getId(), turnoDesdeDB.getOdontologo().getNroMatricula(),
+                turnoDesdeDB.getOdontologo().getApellido(),turnoDesdeDB.getOdontologo().getNombre()
+        );
+        PacienteResponseDto pacienteResponseDto = new PacienteResponseDto(
+                turnoDesdeDB.getPaciente().getId(),turnoDesdeDB.getPaciente().getApellido(),
+                turnoDesdeDB.getPaciente().getNombre(),turnoDesdeDB.getPaciente().getDni()
+        );
+
+        TurnoResponseDto turnoResponseDto = new TurnoResponseDto(
+                turnoDesdeDB.getId(),
+                pacienteResponseDto,odontologoResponseDto,
+                turnoDesdeDB.getFecha().toString()
+        );
+
+        return turnoResponseDto;
+    }
+
+    private TurnoResponseDto convertirTurnoEnResponse(Turno turno){
+        TurnoResponseDto turnoResponseDto = modelMapper.map(turno, TurnoResponseDto.class);
+        turnoResponseDto.setPacienteResponseDto(modelMapper.map(turno.getPaciente(), PacienteResponseDto.class));
+        turnoResponseDto.setOdontologoResponseDto(modelMapper.map(turno.getOdontologo(), OdontologoResponseDto.class));
+        return  turnoResponseDto;
     }
 
 

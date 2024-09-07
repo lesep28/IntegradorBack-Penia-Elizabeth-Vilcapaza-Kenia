@@ -1,5 +1,8 @@
 package dh.backend.clinica.controller;
 
+import dh.backend.clinica.dto.request.TurnoModifyDto;
+import dh.backend.clinica.dto.request.TurnoRequestDto;
+import dh.backend.clinica.dto.response.TurnoResponseDto;
 import dh.backend.clinica.entity.Turno;
 import dh.backend.clinica.service.ITurnoService;
 import org.springframework.http.HttpStatus;
@@ -19,8 +22,8 @@ public class TurnoController {
     }
 
     @PostMapping("/guardar")
-    public ResponseEntity<Turno> guardarTurno(@RequestBody Turno turno){
-        return ResponseEntity.ok(turnoService.guardarTurno(turno));
+    public ResponseEntity<TurnoResponseDto> guardarTurno(@RequestBody TurnoRequestDto turnoRequestDto){
+        return ResponseEntity.ok(turnoService.guardarTurno(turnoRequestDto));
     }
 
     @GetMapping("/buscar/{id}")
@@ -34,20 +37,14 @@ public class TurnoController {
     }
 
     @GetMapping("/buscartodos")
-    public ResponseEntity<List<Turno>> buscarTodos(){
+    public ResponseEntity<List<TurnoResponseDto>> buscarTodos(){
         return ResponseEntity.ok(turnoService.buscarTodos());
     }
 
     @PutMapping("/modificar")
-    public ResponseEntity<String>  modificarTurno(@RequestBody Turno turno){
-        Optional<Turno> turnoEncontrado = turnoService.buscarPorId(turno.getId());
-        if(turnoEncontrado.isPresent()){
-            turnoService.modificarTurno(turno);
-            String jsonResponse = "{\"mensaje\": \"El turno fue modificado\"}";
-            return ResponseEntity.ok(jsonResponse);
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public ResponseEntity<String>  modificarTurno(@RequestBody TurnoModifyDto turnoModifyDto){
+        turnoService.modificarTurno(turnoModifyDto);
+        return ResponseEntity.ok("{\"mensaje\": \"El turno fue modificado\"}");
     }
 
     @DeleteMapping("/eliminar/{id}")
