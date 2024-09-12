@@ -68,5 +68,16 @@ public class PacienteController {
         }
     }
 
+    @GetMapping("/buscarApellidoNombre/{apellido}/{nombre}")
+    public ResponseEntity<List<Paciente>> buscarApellido(@PathVariable String apellido, @PathVariable String nombre){
+        return ResponseEntity.ok(pacienteService.buscarPorApellidoyNombre(apellido, nombre));
+    }
+
+    @GetMapping("/buscarApellido/{parte}")
+    public ResponseEntity<List<Paciente>> buscarParteApellido(@PathVariable String parte){
+        return ResponseEntity.ok(pacienteService.buscarPorUnaParteApellido(parte));
+    }
+
+
 
 }
