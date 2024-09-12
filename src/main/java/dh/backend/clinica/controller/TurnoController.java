@@ -27,8 +27,8 @@ public class TurnoController {
     }
 
     @GetMapping("/buscar/{id}")
-    public ResponseEntity<Turno> buscarPorId(@PathVariable Integer id){
-        Optional<Turno> turno = turnoService.buscarPorId(id);
+    public ResponseEntity<TurnoResponseDto> buscarPorId(@PathVariable Integer id){
+        Optional<TurnoResponseDto> turno = turnoService.buscarPorId(id);
         if(turno.isPresent()){
             return ResponseEntity.ok(turno.get());
         } else {
@@ -47,9 +47,15 @@ public class TurnoController {
         return ResponseEntity.ok("{\"mensaje\": \"El turno fue modificado\"}");
     }
 
+    @GetMapping("/buscarTurnoApellido/{apellido}")
+    public ResponseEntity<TurnoResponseDto> buscarTurnoPorApellido(@PathVariable String apellido){
+        Optional<TurnoResponseDto> turno = turnoService.buscarTurnosPorPaciente(apellido);
+        return ResponseEntity.ok(turno.get());
+    }
+
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<String> eliminarOdontologo(@PathVariable Integer id){
-        Optional<Turno>  turnoEncontrado = turnoService.buscarPorId(id);
+        Optional<TurnoResponseDto>  turnoEncontrado = turnoService.buscarPorId(id);
         if(turnoEncontrado.isPresent()) {
             turnoService.eliminarTurno(id);
             String jsonResponse = "{\"mensaje\": \"El turno fue eliminado\"}";
