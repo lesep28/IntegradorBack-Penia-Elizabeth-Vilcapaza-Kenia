@@ -54,14 +54,8 @@ public class TurnoController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public ResponseEntity<String> eliminarOdontologo(@PathVariable Integer id){
-        Optional<TurnoResponseDto>  turnoEncontrado = turnoService.buscarPorId(id);
-        if(turnoEncontrado.isPresent()) {
-            turnoService.eliminarTurno(id);
-            String jsonResponse = "{\"mensaje\": \"El turno fue eliminado\"}";
-            return ResponseEntity.ok(jsonResponse);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<String> eliminarTurno(@PathVariable Integer id){
+        turnoService.eliminarTurno(id);
+        return ResponseEntity.ok("{\"mensaje\": \"El turno fue eliminado\"}");
     }
 }
