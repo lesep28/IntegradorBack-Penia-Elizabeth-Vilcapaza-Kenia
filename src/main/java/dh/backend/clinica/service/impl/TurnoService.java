@@ -43,14 +43,14 @@ public class TurnoService implements ITurnoService {
         Turno turnoDesdeDB = null;
         TurnoResponseDto turnoResponseDto = null;
         if(paciente.isPresent() && odontologo.isPresent()){
-            //armado del turno desde el turno request dto
+            //Armado del turno desde el turno request dto
             turno.setPaciente(paciente.get());
             turno.setOdontologo(odontologo.get());
             turno.setFecha(LocalDate.parse(turnoRequestDto.getFecha()));
             //obtengo el turno persistido con el id
             turnoDesdeDB = turnoRepository.save(turno);
 
-            //armado del turno response dto desde el turno obtenido de la base de datos
+            //Armado del turno response dto desde el turno obtenido de la base de datos
             //turnoResponseDto = obtenerTurnoResponse(turnoDesdeDB);
            //armado con model mapper
            turnoResponseDto = convertirTurnoEnResponse(turnoDesdeDB);
