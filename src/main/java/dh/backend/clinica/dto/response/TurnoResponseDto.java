@@ -1,6 +1,7 @@
 package dh.backend.clinica.dto.response;
 
 
+import dh.backend.clinica.utils.GsonProvider;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,8 @@ public class TurnoResponseDto {
     //datos del odontologo
     private OdontologoResponseDto odontologoResponseDto;
     private String fecha;
+    @Override
+    public String toString() {
+        return GsonProvider.getGson().toJson(this);
+    }
 }

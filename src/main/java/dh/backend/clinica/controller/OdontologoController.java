@@ -25,6 +25,7 @@ public class OdontologoController {
         return ResponseEntity.ok(odontologoService.guardarOdontologo(odontologo));
     }
 
+
     @GetMapping("/buscar/{id}")
     public ResponseEntity<Odontologo> buscarPorId(@PathVariable Integer id){
         Optional<Odontologo> odontologo = odontologoService.buscarPorId(id);

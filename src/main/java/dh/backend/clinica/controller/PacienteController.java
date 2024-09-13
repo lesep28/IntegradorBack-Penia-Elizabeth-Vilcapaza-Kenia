@@ -25,6 +25,7 @@ public class PacienteController {
         return ResponseEntity.ok(pacienteService.guardarPaciente(paciente));
     }
 
+
     //GET
     @GetMapping("/buscar/{id}")
     public ResponseEntity<Paciente>  buscarPorId(@PathVariable Integer id){

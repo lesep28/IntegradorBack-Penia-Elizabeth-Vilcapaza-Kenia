@@ -8,6 +8,7 @@ import dh.backend.clinica.dto.response.TurnoResponseDto;
 import dh.backend.clinica.entity.Odontologo;
 import dh.backend.clinica.entity.Paciente;
 import dh.backend.clinica.entity.Turno;
+import dh.backend.clinica.exception.BadRequestException;
 import dh.backend.clinica.exception.ResourceNotFoundException;
 import dh.backend.clinica.repository.ITurnoRepository;
 import dh.backend.clinica.service.IOdontologoService;
@@ -44,28 +45,32 @@ public class TurnoService implements ITurnoService {
 
     @Override
     public TurnoResponseDto guardarTurno(TurnoRequestDto turnoRequestDto){
-        Optional<Paciente> paciente = pacienteService.buscarPorId(turnoRequestDto.getPaciente_id());
-        Optional<Odontologo> odontologo = odontologoService.buscarPorId(turnoRequestDto.getOdontologo_id());
-        Turno turno = new Turno();
-        Turno turnoDesdeDB = null;
-        TurnoResponseDto turnoResponseDto = null;
-        if(paciente.isPresent() && odontologo.isPresent()){
-            //Armado del turno desde el turno request dto
+        try{
+            Optional<Paciente> paciente = pacienteService.buscarPorId(turnoRequestDto.getPaciente_id());
+            Optional<Odontologo> odontologo = odontologoService.buscarPorId(turnoRequestDto.getOdontologo_id());
+            Turno turno = new Turno();
+            Turno turnoDesdeBD = null;
+            TurnoResponseDto turnoResponseDto = null;
+            // el armado del turno desde el turno request dto
             turno.setPaciente(paciente.get());
             turno.setOdontologo(odontologo.get());
             turno.setFecha(LocalDate.parse(turnoRequestDto.getFecha()));
-            //obtengo el turno persistido con el id
-            turnoDesdeDB = turnoRepository.save(turno);
 
-            //Armado del turno response dto desde el turno obtenido de la base de datos
-            //turnoResponseDto = obtenerTurnoResponse(turnoDesdeDB);
-           //armado con model mapper
-           turnoResponseDto = convertirTurnoEnResponse(turnoDesdeDB);
+            // aca obtengo el turno persistido con el id
+            turnoDesdeBD = turnoRepository.save(turno);
 
+            // armado del turno response dto desde el turno obtenido de la base de datos
+            // armado a mano
+            // turnoResponseDto = obtenerTurnoResponse(turnoDesdeBD);
+            // armado con modelmapper
+            turnoResponseDto = convertirTurnoEnResponse(turnoDesdeBD);
+            return turnoResponseDto;
+        } catch (ResourceNotFoundException e){
+            throw new BadRequestException("Paciente u odontologo no existen en la base de datos");
         }
-
-        return turnoResponseDto;
     }
+
+
 
     @Override
     public Optional<TurnoResponseDto> buscarPorId(Integer id) {
@@ -74,7 +79,7 @@ public class TurnoService implements ITurnoService {
            TurnoResponseDto turnoRespuesta = convertirTurnoEnResponse(turno.get());
            return Optional.of(turnoRespuesta);
        }else{
-           return null;
+           throw new ResourceNotFoundException("El turno no fue encontrado");
        }
     }
 
