@@ -54,4 +54,17 @@ public class OdontologoService implements IOdontologoService {
             throw new ResourceNotFoundException("Odontologo no encontrado");
         }
     }
+
+    @Override
+    public List<Odontologo> buscarPorApellidoONombre(String apellido, String nombre) {
+        return odontologoRepository.findByApellidoOrNombre(apellido, nombre);
+    }
+
+    @Override
+    public List<Odontologo> buscarPorApellidoQueComienzaCon(String prefix) {
+            return odontologoRepository.findByApellidoStartingWith(prefix);
+        }
+
+
+
 }

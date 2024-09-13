@@ -56,4 +56,31 @@ public class OdontologoController {
         odontologoService.eliminarOdontologo(id);
         return ResponseEntity.ok("{\"mensaje\": \"El odontologo fue eliminado\"}");
     }
+
+    @GetMapping("/buscarApellidoNombre/{apellido}/{nombre}")
+    public ResponseEntity<List<Odontologo>> buscarPorApellidoONombre(@PathVariable String apellido, @PathVariable String nombre) {
+        List<Odontologo> odontologos = odontologoService.buscarPorApellidoONombre(apellido, nombre);
+        if (odontologos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+
+            return ResponseEntity.ok(odontologos);
+        }
+    }
+
+    @GetMapping("/buscarApellidoQueComienzaCon/{prefix}")
+    public ResponseEntity<List<Odontologo>> buscarPorApellidoQueComienzaCon(@PathVariable String prefix) {
+        List<Odontologo> odontologos = odontologoService.buscarPorApellidoQueComienzaCon(prefix);
+
+        if (odontologos.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.ok(odontologos);
+        }
+
+    }
+
 }
+
+
+
