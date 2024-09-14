@@ -3,10 +3,11 @@ package dh.backend.clinica;
 import dh.backend.clinica.entity.Domicilio;
 import dh.backend.clinica.entity.Paciente;
 import dh.backend.clinica.service.impl.PacienteService;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @Transactional
 class PacienteServiceTest {
+    static final Logger logger = LoggerFactory.getLogger(PacienteServiceTest.class);
 
     @Autowired
     PacienteService pacienteService;

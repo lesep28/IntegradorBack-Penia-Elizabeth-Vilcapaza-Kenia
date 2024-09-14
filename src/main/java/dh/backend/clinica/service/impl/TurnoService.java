@@ -45,6 +45,7 @@ public class TurnoService implements ITurnoService {
 
     @Override
     public TurnoResponseDto guardarTurno(TurnoRequestDto turnoRequestDto){
+        logger.info("Guardando nuevo turno");
         try{
             Optional<Paciente> paciente = pacienteService.buscarPorId(turnoRequestDto.getPaciente_id());
             Optional<Odontologo> odontologo = odontologoService.buscarPorId(turnoRequestDto.getOdontologo_id());
@@ -90,7 +91,7 @@ public class TurnoService implements ITurnoService {
         for (Turno t: turnoDesdeDB){
             //model mapper
             TurnoResponseDto turnoRespuesta = convertirTurnoEnResponse(t);
-            logger.info("turno "+turnoRespuesta);
+            logger.info("Listado de turnos "+turnoRespuesta);
             turnosRespuesta.add(turnoRespuesta);
         }
 
@@ -107,6 +108,7 @@ public class TurnoService implements ITurnoService {
                     paciente.get(), odontologo.get(), LocalDate.parse(turnoModifyDto.getFecha())
                     );
             turnoRepository.save(turno);
+            logger.info("El turno se ha modificado");
         }
 
     }
