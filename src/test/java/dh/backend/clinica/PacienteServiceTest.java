@@ -51,5 +51,6 @@ class PacienteServiceTest {
         pacientes = pacienteService.buscarTodos();
    // entonces
         assertFalse(pacientes.isEmpty());
+        logger.info("Finalizando test para listar pacientes");
   }
 }

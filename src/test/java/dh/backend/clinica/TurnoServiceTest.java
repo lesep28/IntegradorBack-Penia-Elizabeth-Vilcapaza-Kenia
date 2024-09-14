@@ -11,6 +11,8 @@ import dh.backend.clinica.service.impl.TurnoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
 @Transactional
 class TurnoServiceTest {
+
+    static final Logger logger = LoggerFactory.getLogger(TurnoServiceTest.class);
 
     @Autowired
     TurnoService turnoService;
@@ -81,5 +85,6 @@ class TurnoServiceTest {
         turnos = turnoService.buscarTodos();
         // entonces
         assertFalse(turnos.isEmpty());
+        logger.info("Finalizando test para listar turnos");
     }
 }
